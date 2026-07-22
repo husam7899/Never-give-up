@@ -36,13 +36,9 @@ if __name__ == "__main__":
     app = ApplicationBuilder().token(BOT_TOKEN).build()
     app.add_handler(CommandHandler("start", start))
     
-    # Clean up webhook if it exists to avoid Conflict errors
-    # (HTTP 409 Conflict in logs usually means a webhook is already active)
-    import asyncio
-    async def cleanup():
-        bot = app.bot
-        await bot.delete_webhook()
-    asyncio.run(cleanup())
+    # Use a simpler way to start the bot
+    # The asyncio.run(cleanup()) inside the main thread is causing event loop conflicts.
+    # We will just run polling directly.
     
     logger.info("Starting Telegram Bot for P2P Mini App...")
     logger.info(f"Using WebApp URL: {WEBAPP_URL}")

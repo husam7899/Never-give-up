@@ -37,13 +37,18 @@ app.include_router(wallets.router)
 app.include_router(transactions.router)
 
 # Serve frontend
-frontend_dir = os.path.join(os.path.dirname(__file__), "..", "..", "frontend")
+frontend_dir = os.path.join(os.path.dirname(__file__), "..", "frontend")
+print(f"DEBUG: Checking frontend dir: {frontend_dir}")
 if os.path.exists(frontend_dir):
+    print(f"DEBUG: Frontend dir exists!")
     app.mount("/static", StaticFiles(directory=frontend_dir), name="frontend")
 
     @app.get("/app")
     async def mini_app():
+        print(f"DEBUG: Serving index.html from {frontend_dir}")
         return FileResponse(os.path.join(frontend_dir, "index.html"))
+else:
+    print(f"DEBUG: Frontend dir NOT FOUND at {frontend_dir}")
 
 
 @app.get("/")

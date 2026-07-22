@@ -2,26 +2,29 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>P2P Crypto Market</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>P2P Market</title>
     <link rel="stylesheet" href="style.css">
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
 </head>
 <body>
-    <div id="app">
-        <header>
-            <h1>P2P Market</h1>
-            <div id="user-info"></div>
-        </header>
-        <nav>
-            <button onclick="showSection('buy')">Buy</button>
-            <button onclick="showSection('sell')">Sell</button>
-            <button onclick="showSection('orders')">My Orders</button>
-        </nav>
-        <main id="content">
-            <!-- Dynamic Content -->
-        </main>
+    <div id="notification-area"></div>
+
+    <div class="balance-card">
+        <div>Your USDT Balance</div>
+        <div class="balance-amount" id="balance">0.00</div>
     </div>
+
+    <div class="tabs">
+        <div class="tab active" onclick="switchTab(this, 'buy')">Buy</div>
+        <div class="tab" onclick="switchTab(this, 'sell')">Sell</div>
+        <div class="tab" onclick="switchTab(this, 'orders')">My Orders</div>
+    </div>
+
+    <div id="content" class="order-list">
+        <!-- Orders injected here -->
+    </div>
+
     <script src="script.js"></script>
 </body>
 </html>

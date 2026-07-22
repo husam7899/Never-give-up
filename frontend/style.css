@@ -1,34 +1,101 @@
-body {
-    background-color: #0b0e11;
-    color: #e1e1e1;
-    font-family: Arial, sans-serif;
-    margin: 0;
-    padding: 20px;
+/* Binance/Telegram-Wallet Style Dashboard */
+:root {
+    --bg-color: #0b0e11;
+    --card-bg: #1e2329;
+    --text-primary: #e1e1e1;
+    --text-secondary: #848e9c;
+    --accent: #f0b90b;
+    --danger: #f6465d;
+    --success: #0ecb81;
 }
-header {
+
+body {
+    background-color: var(--bg-color);
+    color: var(--text-primary);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    margin: 0;
+    padding: 16px;
+    -webkit-tap-highlight-color: transparent;
+}
+
+/* Header & Balance */
+.balance-card {
+    background: linear-gradient(135deg, #f0b90b 0%, #d39800 100%);
+    color: black;
+    padding: 20px;
+    border-radius: 16px;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.balance-amount {
+    font-size: 28px;
+    font-weight: bold;
+    margin: 10px 0;
+}
+
+/* Navigation Tabs */
+.tabs {
+    display: flex;
+    background: #1e2329;
+    padding: 4px;
+    border-radius: 12px;
+    margin-bottom: 20px;
+}
+
+.tab {
+    flex: 1;
+    padding: 10px;
+    text-align: center;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.tab.active {
+    background: #2b3139;
+    color: var(--accent);
+}
+
+/* Order List */
+.order-list { display: flex; flex-direction: column; gap: 12px; }
+
+.order-item {
+    background: var(--card-bg);
+    padding: 16px;
+    border-radius: 12px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border-bottom: 1px solid #333;
-    padding-bottom: 10px;
 }
-nav {
-    display: flex;
-    gap: 10px;
-    margin: 20px 0;
-}
-button {
-    background: #f0b90b;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 5px;
+
+.order-info h4 { margin: 0; color: var(--text-primary); }
+.order-info p { margin: 4px 0 0; color: var(--text-secondary); font-size: 12px; }
+
+.btn-trade {
+    background: var(--accent);
     color: black;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 8px;
     font-weight: bold;
-    cursor: pointer;
 }
-.order-card {
-    background: #1e2329;
-    padding: 15px;
-    border-radius: 10px;
+
+/* Notifications */
+#notification-area {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1000;
+}
+
+.notify {
+    background: #333;
+    color: white;
+    padding: 12px 20px;
+    border-radius: 8px;
     margin-bottom: 10px;
+    animation: fadeIn 0.3s;
 }
+
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }

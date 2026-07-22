@@ -30,10 +30,12 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 if __name__ == "__main__":
     if BOT_TOKEN == "YOUR_BOT_TOKEN_HERE":
-        logger.warning("Please set TELEGRAM_BOT_TOKEN environment variable.")
+        logger.error("CRITICAL: TELEGRAM_BOT_TOKEN is not set. The bot cannot start.")
+        exit(1)
     
     app = ApplicationBuilder().token(BOT_TOKEN).build()
     app.add_handler(CommandHandler("start", start))
     
     logger.info("Starting Telegram Bot for P2P Mini App...")
+    logger.info(f"Using WebApp URL: {WEBAPP_URL}")
     app.run_polling()

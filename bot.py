@@ -36,6 +36,14 @@ if __name__ == "__main__":
     app = ApplicationBuilder().token(BOT_TOKEN).build()
     app.add_handler(CommandHandler("start", start))
     
+    # Clean up webhook if it exists to avoid Conflict errors
+    # (HTTP 409 Conflict in logs usually means a webhook is already active)
+    import asyncio
+    async def cleanup():
+        bot = app.bot
+        await bot.delete_webhook()
+    asyncio.run(cleanup())
+    
     logger.info("Starting Telegram Bot for P2P Mini App...")
     logger.info(f"Using WebApp URL: {WEBAPP_URL}")
     app.run_polling()

@@ -9,11 +9,23 @@ from app.api import auth, orders, wallets, transactions
 
 # Create tables safely, and if we are on Railway and no DB is provided,
 # SQLite will automatically be created in the ephemeral filesystem.
-try:
-    Base.metadata.create_all(bind=engine)
-    print("Database tables initialized successfully.")
-except Exception as e:
-    print(f"Warning: Could not create tables on startup: {e}")
+@app.on_event("startup")
+async def startup():
+    try:
+        Base.metadata.create_all(bind=engine)
+        print("Database tables initialized successfully.")
+    except Exception as e:
+        print(f"Warning: Could not create tables on startup: {e}")
+        
+    # Start bot and background tasks
+    import asyncio
+    from bot import app as bot_app
+    
+    # Run polling as a background task
+    await bot_app.initialize()
+    await bot_app.start()
+    await bot_app.updater.start_polling()
+    print("Telegram bot polling started.")
 
 app = FastAPI(
     title="Ethiopian P2P Crypto Market",

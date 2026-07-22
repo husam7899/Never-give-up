@@ -28,18 +28,5 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if update.message:
         await update.message.reply_text(welcome_text, reply_markup=reply_markup, parse_mode="Markdown")
 
-if __name__ == "__main__":
-    if BOT_TOKEN == "YOUR_BOT_TOKEN_HERE":
-        logger.error("CRITICAL: TELEGRAM_BOT_TOKEN is not set. The bot cannot start.")
-        exit(1)
-    
-    app = ApplicationBuilder().token(BOT_TOKEN).build()
-    app.add_handler(CommandHandler("start", start))
-    
-    # Use a simpler way to start the bot
-    # The asyncio.run(cleanup()) inside the main thread is causing event loop conflicts.
-    # We will just run polling directly.
-    
-    logger.info("Starting Telegram Bot for P2P Mini App...")
-    logger.info(f"Using WebApp URL: {WEBAPP_URL}")
-    app.run_polling()
+app = ApplicationBuilder().token(BOT_TOKEN).build()
+app.add_handler(CommandHandler("start", start))

@@ -7,9 +7,11 @@ import os
 from app.core.database import engine, Base
 from app.api import auth, orders, wallets, transactions
 
-# Create tables safely
+# Create tables safely, and if we are on Railway and no DB is provided,
+# SQLite will automatically be created in the ephemeral filesystem.
 try:
     Base.metadata.create_all(bind=engine)
+    print("Database tables initialized successfully.")
 except Exception as e:
     print(f"Warning: Could not create tables on startup: {e}")
 

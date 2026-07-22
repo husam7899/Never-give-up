@@ -37,7 +37,14 @@ app.include_router(wallets.router)
 app.include_router(transactions.router)
 
 # Serve frontend
-frontend_dir = os.path.join(os.path.dirname(__file__), "..", "frontend")
+# Since 'app/' is now in root, 'frontend' is in root.
+# os.path.dirname(os.path.abspath(__file__)) is '/opt/data/Never-give-up/app'
+# So parent dir is '/opt/data/Never-give-up/'
+frontend_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "frontend")
+# wait, if abspath is /opt/data/Never-give-up/app/main.py
+# dirname is /opt/data/Never-give-up/app
+# dirname(dirname) is /opt/data/Never-give-up/
+# This is correct.
 print(f"DEBUG: Checking frontend dir: {frontend_dir}")
 if os.path.exists(frontend_dir):
     print(f"DEBUG: Frontend dir exists!")
@@ -48,7 +55,14 @@ if os.path.exists(frontend_dir):
         print(f"DEBUG: Serving index.html from {frontend_dir}")
         return FileResponse(os.path.join(frontend_dir, "index.html"))
 else:
-    print(f"DEBUG: Frontend dir NOT FOUND at {frontend_dir}")
+    # Try just current directory if that fails
+    try_dir = os.path.join(os.getcwd(), "frontend")
+    print(f"DEBUG: Frontend dir NOT FOUND at {frontend_dir}, trying {try_dir}")
+    if os.path.exists(try_dir):
+        app.mount("/static", StaticFiles(directory=try_dir), name="frontend")
+        @app.get("/app")
+        async def mini_app_fallback():
+            return FileResponse(os.path.join(try_dir, "index.html"))
 
 
 @app.get("/")

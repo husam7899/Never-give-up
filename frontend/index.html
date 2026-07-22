@@ -3,27 +3,156 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>P2P Market</title>
+    <title>Telegram P2P Wallet & Market</title>
+    <!-- FontAwesome for Binance/Wallet Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="style.css">
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
 </head>
 <body>
     <div id="notification-area"></div>
 
-    <div class="balance-card">
-        <div>Your USDT Balance</div>
-        <div class="balance-amount" id="balance">0.00</div>
+    <!-- Top Bar / User Profile -->
+    <header class="top-header">
+        <div class="user-profile">
+            <div class="avatar" id="user-avatar">U</div>
+            <div class="user-details">
+                <span class="username" id="username">Trader</span>
+                <span class="badge verified"><i class="fa-solid fa-circle-check"></i> Verified</span>
+            </div>
+        </div>
+        <div class="header-actions">
+            <button class="icon-btn" onclick="notify('Notifications cleared')"><i class="fa-regular fa-bell"></i></button>
+            <button class="icon-btn" onclick="openModal('create-order-modal')"><i class="fa-solid fa-plus"></i></button>
+        </div>
+    </header>
+
+    <!-- Binance Wallet Balance Card -->
+    <section class="wallet-card">
+        <div class="card-header">
+            <span>Total Estimated Balance</span>
+            <i class="fa-solid fa-eye" id="toggle-balance" onclick="toggleBalance()"></i>
+        </div>
+        <div class="balance-main">
+            <span class="currency">$</span>
+            <span class="amount" id="balance-amount">1,245.80</span>
+            <span class="crypto-tag">USDT</span>
+        </div>
+        <div class="balance-sub">
+            ≈ <span id="balance-etb">174,412.00</span> ETB
+        </div>
+        <div class="quick-actions">
+            <button class="action-btn" onclick="switchTab('buy')">
+                <i class="fa-solid fa-arrow-down-left"></i> Buy
+            </button>
+            <button class="action-btn" onclick="switchTab('sell')">
+                <i class="fa-solid fa-arrow-up-right"></i> Sell
+            </button>
+            <button class="action-btn" onclick="openModal('create-order-modal')">
+                <i class="fa-solid fa-file-circle-plus"></i> Post Ad
+            </button>
+        </div>
+    </section>
+
+    <!-- Navigation Tabs -->
+    <nav class="p2p-tabs">
+        <button class="tab-btn active" data-tab="buy" onclick="switchTab('buy')">
+            <i class="fa-solid fa-cart-shopping"></i> Buy USDT
+        </button>
+        <button class="tab-btn" data-tab="sell" onclick="switchTab('sell')">
+            <i class="fa-solid fa-money-bill-transfer"></i> Sell USDT
+        </button>
+        <button class="tab-btn" data-tab="my-orders" onclick="switchTab('my-orders')">
+            <i class="fa-solid fa-list-check"></i> Orders
+        </button>
+    </nav>
+
+    <!-- Filter Bar -->
+    <div class="filter-bar">
+        <select id="filter-payment" onchange="applyFilters()">
+            <option value="ALL">All Payments</option>
+            <option value="TELEBIRR">Telebirr</option>
+            <option value="CBE">CBE Bank</option>
+            <option value="DASHEN">Dashen Bank</option>
+        </select>
+        <select id="filter-chain" onchange="applyFilters()">
+            <option value="ALL">All Chains</option>
+            <option value="BEP20">BEP-20 (BSC)</option>
+            <option value="TRC20">TRC-20 (Tron)</option>
+        </select>
     </div>
 
-    <div class="tabs">
-        <div class="tab active" onclick="switchTab(this, 'buy')">Buy</div>
-        <div class="tab" onclick="switchTab(this, 'sell')">Sell</div>
-        <div class="tab" onclick="switchTab(this, 'orders')">My Orders</div>
+    <!-- Orders Feed -->
+    <main id="orders-container" class="orders-feed">
+        <!-- Order items will be dynamically injected here -->
+    </main>
+
+    <!-- Post Ad / Create Order Modal -->
+    <div id="create-order-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Create P2P Offer</h3>
+                <span class="close-btn" onclick="closeModal('create-order-modal')">&times;</span>
+            </div>
+            <form id="create-order-form" onsubmit="handleCreateOrder(event)">
+                <div class="form-group">
+                    <label>Offer Type</label>
+                    <div class="radio-group">
+                        <label><input type="radio" name="order_type" value="SELL" checked> I want to Sell USDT</label>
+                        <label><input type="radio" name="order_type" value="BUY"> I want to Buy USDT</label>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Price per USDT (ETB)</label>
+                    <input type="number" id="form-price" step="0.01" placeholder="e.g. 140.50" required>
+                </div>
+                <div class="form-group">
+                    <label>Total Amount (USDT)</label>
+                    <input type="number" id="form-amount" step="1" placeholder="e.g. 500" required>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Min Limit (ETB)</label>
+                        <input type="number" id="form-min" placeholder="1,000" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Max Limit (ETB)</label>
+                        <input type="number" id="form-max" placeholder="70,000" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Payment Method</label>
+                    <select id="form-payment" required>
+                        <option value="TELEBIRR">Telebirr</option>
+                        <option value="CBE">Commercial Bank of Ethiopia (CBE)</option>
+                        <option value="DASHEN">Dashen Bank</option>
+                        <option value="AWASH">Awash Bank</option>
+                    </select>
+                </div>
+                <button type="submit" class="submit-btn">Publish Offer</button>
+            </form>
+        </div>
     </div>
 
-    <div id="content" class="order-list">
-        <!-- Orders injected here -->
-    </div>
+    <!-- Bottom Navigation Bar (Telegram Wallet Style) -->
+    <footer class="bottom-nav">
+        <a href="#" class="nav-item active" onclick="switchTab('buy')">
+            <i class="fa-solid fa-arrows-rotate"></i>
+            <span>P2P Trading</span>
+        </a>
+        <a href="#" class="nav-item" onclick="switchTab('my-orders')">
+            <i class="fa-solid fa-clock-history"></i>
+            <span>Trades</span>
+        </a>
+        <a href="#" class="nav-item" onclick="openModal('create-order-modal')">
+            <i class="fa-solid fa-plus-circle"></i>
+            <span>Create Ad</span>
+        </a>
+        <a href="#" class="nav-item" onclick="notify('Wallet settings coming soon')">
+            <i class="fa-solid fa-wallet"></i>
+            <span>Wallet</span>
+        </a>
+    </footer>
 
     <script src="script.js"></script>
 </body>

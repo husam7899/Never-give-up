@@ -7,8 +7,11 @@ import os
 from app.core.database import engine, Base
 from app.api import auth, orders, wallets, transactions
 
-# Create tables
-Base.metadata.create_all(bind=engine)
+# Create tables safely
+try:
+    Base.metadata.create_all(bind=engine)
+except Exception as e:
+    print(f"Warning: Could not create tables on startup: {e}")
 
 app = FastAPI(
     title="Ethiopian P2P Crypto Market",

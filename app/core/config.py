@@ -3,7 +3,12 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./p2p_market.db")
+raw_db_url = os.getenv("DATABASE_URL", "sqlite:///./p2p_market.db")
+# Fix Railway/Postgres URL if it starts with postgres:// instead of postgresql://
+if raw_db_url.startswith("postgres://"):
+    raw_db_url = raw_db_url.replace("postgres://", "postgresql://", 1)
+
+DATABASE_URL = raw_db_url
 SECRET_KEY = os.getenv("SECRET_KEY", "change-me-in-production-please")
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 60 * 24 * 7

@@ -4,7 +4,6 @@ from dotenv import load_dotenv
 load_dotenv()
 
 raw_db_url = os.getenv("DATABASE_URL", "sqlite:///./p2p_market.db")
-# Fix Railway/Postgres URL if it starts with postgres:// instead of postgresql://
 if raw_db_url.startswith("postgres://"):
     raw_db_url = raw_db_url.replace("postgres://", "postgresql://", 1)
 
@@ -12,6 +11,9 @@ DATABASE_URL = raw_db_url
 SECRET_KEY = os.getenv("SECRET_KEY", "change-me-in-production-please")
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 60 * 24 * 7
+
+# Demo Mode configuration
+DEMO_MODE = os.getenv("DEMO_MODE", "true").lower() == "true"
 
 # Blockchain
 BEP20_USDT_CONTRACT = os.getenv("BEP20_USDT_CONTRACT", "0x55d398326f99059fF775485246999027B3197955")
